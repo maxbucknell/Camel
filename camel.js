@@ -11,7 +11,7 @@
   var express = require('express')
     , http    = require('http')
     
-    , SomethingWentWrongError = function (statusCode, message, req) {
+    , SomethingWentWrongError = function (statusCode, message) {
         try {
           this.statusCode = req.query.suppress_response_codes ? 200 : statusCode
         } catch (e) {
@@ -20,10 +20,11 @@
         
         this.message = {
             status  : statusCode
-          , message : message || 'Some ignorant slut didn\'t think you important enough to get a decent error message.'
+          , message : message || 'Message left unset; suitable punishment assigned.'
         }
       }
     
+    // Some commonly used
     , unusedEndpointError = new SomethingWentWrong(405, 'The endpoint you asked for exists, but does not respond to that method.')
     , notAuthenticatedError = new SomethingWentWrong(401, 'Please provide a valid API signature.')
     , notAuthorisedError = new SomethingWentWrong(403, 'That API signature does not grant you to access that resource.')
@@ -37,7 +38,7 @@
             
             , outputFunc = routes[req.route.method + dir] || unusedEndpoint
           
-          va
+          
           
           try {
             res.send(valid ? 
@@ -52,23 +53,23 @@
     
     , routes = {
         getPosts    : function (req) {
-          return ['hello', 'world']
+          //...
         }
       , postPosts   : function (req) {
-          return ['hello', 'world']
+          //...
         }
       , putPosts    : function (req) {
-          return ['hello', 'world']
+          //...
         }
         
       , getPost     : function (req) {
-          return ['hello', 'world']
+          //...
         }
       , putPost     : function (req) {
-          return ['hello', 'world']
+          //...
         }
       , deletePost  : function (req) {
-          return ['hello', 'world']
+          //...
         }
     }
     
@@ -76,8 +77,7 @@
   
   app.enable('trust proxy')
   
-  app.all('/posts', dispatch('posts', ['put', 'post', 'delete']))
-  app.all('/posts/:id', dispatch('posts', ['put', 'post', 'delete']))
+  app.all('/posts/:id?', dispatch('posts', ['put', 'post', 'delete']))
   
   http.createServer(app).listen(29722)
 }()
