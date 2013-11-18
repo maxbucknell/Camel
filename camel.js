@@ -22,28 +22,10 @@
         , '     [[] [[]'
       ].join('\n')
     
-  
-    , isSigValidForResource = function (signature, restricted) {
-        // blah blah validate signature
-        return 403
-      }
-    
-    , getError = (function () {
-        var notAuthenticated = { status: 401, message: 'Please provide a valid API signature.' }
-          , notAuthorised    = { status: 403, message: 'That API signature does not grant you to access that resource.' }
-          , notFound         = { status: 404, message: 'We cannot find the thing you asked for because it does not exist.'}
-          , unusedEndpoint   = { status: 405, message: 'The endpoint you asked for exists, but does not respond to that method.' }
-          , errorFunc = function (code) {
-              switch (code) {
-                case 'notAuthenticated'  :
-                case 401                 : return notAuthenticated
-                case 'notAuthorised'     :
-                case 403                 : return notAuthorised
-                case 'unusedEndpoint'    :
-                case 405                 : return unusedEndpoint
-                default                  : return notFound
-              }
-            }
+    , notAuthenticated = { status: 401, message: 'Please provide a valid API signature.' }
+    , notAuthorised    = { status: 403, message: 'That API signature does not grant you to access that resource.' }
+    , notFound         = { status: 404, message: 'We cannot find the thing you asked for because it does not exist.'}
+    , unusedEndpoint   = { status: 405, message: 'The endpoint you asked for exists, but does not respond to that method.' }
           
           return errorFunc
       })()
@@ -56,7 +38,7 @@
             , restricted = !!(['get', 'post', 'put', 'delete'].indexOf(method) + 1)
             , isAuthorised = isSigValidForResource(signature, restricted)
             , outputFunc = routes[method + dir] || unusedEndpoint
-            , response = isAuthorised === true ? outputFunc(req) : getError(isAuthorised)
+            , response = isAuthorised === true ? outputFunc(req) : notAuthenticated
             , status = response.status && !req.query.suppress_status_codes ? response.status : 200
           
           res.send(status, response)
